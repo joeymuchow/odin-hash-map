@@ -23,12 +23,49 @@ class HashMap {
 
     set(key, value) {
         const index = this.hash(key);
+        if (index < 0 || index >= this.buckets.length) {
+            throw new Error("Trying to access index out of bounds");
+        }
         if (this.buckets[index] === undefined) {
             const linkedList = new LinkedList();
             linkedList.append(key, value);
             this.buckets[index] = linkedList;
         } else {
-            this.buckets[index].append(key, value);
+            const currentNode = this.buckets[index].head;
+            while (currentNode.nextNode !== null) {
+                if (currentNode.key === key) {
+                    break;
+                }
+                currentNode = currentNode.nextNode;
+            }
+            if (currentNode.key === key) {
+                currentNode.value = value;
+            } else {
+                this.buckets[index].append(key, value);
+            }
+        }
+
+        if (this.length() > (this.capacity * this.loadFactor)) {
+            // increase capacity and remake hashmap
+            this.increaseCapacity();
+        }
+    }
+
+    increaseCapacity() {
+        const current = this.buckets;
+        this.capacity = this.capacity * 2;
+        this.buckets = new Array(this.capacity);
+
+        for (const bucket of current) {
+            if (bucket !== undefined) {
+                let currentNode = bucket.head;
+                while (currentNode.nextNode !== null) {
+                    this.set(currentNode.key, currentNode.value);
+
+                    currentNode = currentNode.nextNode;
+                }
+                this.set(currentNode.key, currentNode.value);
+            }
         }
     }
 
@@ -94,6 +131,7 @@ class HashMap {
                 this.buckets[i] = undefined;
             }
         }
+        this.capacity = 16;
     }
 
     keys() {
