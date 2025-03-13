@@ -58,27 +58,93 @@ class HashMap {
     }
 
     remove(key) {
-       
+        for (let i = 0; i < this.buckets.length; i++) {
+            if (this.buckets[i] !== undefined) {
+                const index = this.buckets[i].find("key", key);
+                if (index !== null) {
+                    this.buckets[i].removeAt(index);
+                    if (this.buckets[i].size === 0) {
+                        this.buckets[i] = undefined;
+                    }
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     length() {
-        
+        let total = 0;
+        for (const bucket of this.buckets) {
+            if (bucket !== undefined) {
+                let currentNode = bucket.head;
+                while (currentNode.nextNode !== null) {
+                    total += 1;
+                    currentNode = currentNode.nextNode;
+                }
+                total += 1;
+            }
+        }
+        return total;
     }
 
     clear() {
-        
+        for (let i = 0; i < this.buckets.length; i++) {
+            if (this.buckets[i] !== undefined) {
+                this.buckets[i] = undefined;
+            }
+        }
     }
 
     keys() {
-        
+        const arr = [];
+        for (const bucket of this.buckets) {
+            if (bucket !== undefined) {
+                let currentNode = bucket.head;
+                while (currentNode.nextNode !== null) {
+                    arr.push(currentNode.key);
+                    currentNode = currentNode.nextNode;
+                }
+                arr.push(currentNode.key);
+            }
+        }
+        return arr;
     }
 
     values() {
-        
+        const arr = [];
+        for (const bucket of this.buckets) {
+            if (bucket !== undefined) {
+                let currentNode = bucket.head;
+                while (currentNode.nextNode !== null) {
+                    arr.push(currentNode.value);
+                    currentNode = currentNode.nextNode;
+                }
+                arr.push(currentNode.value);
+            }
+        }
+        return arr;
     }
 
     entries() {
-        
+        const arr = [];
+        for (const bucket of this.buckets) {
+            if (bucket !== undefined) {
+                let currentNode = bucket.head;
+                while (currentNode.nextNode !== null) {
+                    const pair = [];
+                    pair.push(currentNode.key);
+                    pair.push(currentNode.value);
+                    arr.push(pair);
+                    currentNode = currentNode.nextNode;
+                }
+                const lastPair = [];
+                lastPair.push(currentNode.key);
+                lastPair.push(currentNode.value);
+                arr.push(lastPair);
+            }
+        }
+        return arr;
     }
 }
 

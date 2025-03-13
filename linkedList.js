@@ -60,15 +60,17 @@ class LinkedList {
     contains(field, value) {
         let currentNode = this.head;
 
-        while (currentNode.nextNode !== null) {
+        if (currentNode) {
+            while (currentNode.nextNode !== null) {
+                if (currentNode[field] === value) {
+                    return true;
+                }
+                currentNode = currentNode.nextNode;
+            }
+
             if (currentNode[field] === value) {
                 return true;
             }
-            currentNode = currentNode.nextNode;
-        }
-
-        if (currentNode[field] === value) {
-            return true;
         }
 
         return false;
@@ -135,6 +137,10 @@ class LinkedList {
             throw new Error("Out of bounds error");
         } else if (index === 0) {
             this.head = this.head.nextNode;
+            this.size -= 1;
+            if (this.size === 0) {
+                this.tail = null;
+            }
         } else if (index === this.size - 1) {
             this.pop();
         } else {
